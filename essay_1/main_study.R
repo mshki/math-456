@@ -1,10 +1,8 @@
 # Load required packages
 library(tidyverse) # For data manipulation and visualization
-library(broom)
 library(ggpubr) # Creates publication ready-plot
 library(caTools) # For data analysis and manipulation tasks
 library(lmtest) # For testing the model 
-library(qqplotr)
 theme_set(theme_classic())
 
 # Load the dataset
