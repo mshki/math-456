@@ -17,6 +17,14 @@ scatter_plot <- ggplot(scores, aes(x = time_study, y = Marks)) +
   theme(plot.title = element_text(hjust = 0.5))
 scatter_plot
 
+# Boxplots to find outliers
+boxplot(scores$Marks, 
+        main = "Boxplot of Marks",
+        col = "thistle1")
+boxplot(scores$time_study,
+        main = "Boxplot of Time Studied",
+        col = "rosybrown1")
+
 # Split the dataset into test set and training set
 set.seed(37)
 split = sample.split(scores$time_study, SplitRatio = 0.8)
@@ -76,13 +84,13 @@ plot(model, 4)
 # 5 - Residuals vs Leverage Plot (Check Outliers and High Leverage Points)
 plot(model, 5)
 
-# 2: Independence Check: Durbin-Watson Test
+# Independence Check: Durbin-Watson Test
 dwtest(model) # p-value > 0.05 suggests no autocorrelation
 
-# 4: Normality check: Q-Q Plot and Shapiro-Wilk Test
+# Normality check: Q-Q Plot and Shapiro-Wilk Test
 shapiro.test(residuals(model)) # p-value > 0.05 suggests normality
 
-# 5: Check Residuals Histogram
+# Check Residuals Histogram
 hist(residuals(model), main = "Histogram of Residuals", col = "lightblue")
 
 
