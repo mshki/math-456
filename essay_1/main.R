@@ -3,6 +3,7 @@ library(tidyverse) # For data manipulation and visualization
 library(ggpubr) # Creates publication ready-plot
 library(caTools) # For data analysis and manipulation tasks
 library(lmtest) # For testing the model 
+library(caret) # For regression training
 theme_set(theme_classic())
 
 # Load the dataset
@@ -12,7 +13,7 @@ colnames(scores) # Print column names
 # Visualization, pre-linear regression
 scatter_plot <- ggplot(scores, aes(x = time_study, y = Marks)) +
   geom_point() +
-  ggtitle("Scatter Plot with Regression Line") + 
+  ggtitle("Scatter Plot") + 
   theme(plot.title = element_text(hjust = 0.5))
 scatter_plot
 
@@ -52,8 +53,13 @@ sigma(model) # returns RSE
 
 cor(training_set$time_study, training_set$Marks) # returns correlation coefficient
 
+# Calculate prediction accuracy
+pred <- predict(model, newdata=test_set)
+data.frame(R2 = R2(pred, test_set$Marks),  
+           MSE = MAE(pred, test_set$Marks))
+
 # Set up Diagnostic Plots
-par(mfrow=c(2,1))
+# par(mfrow=c(2,1))
 
 # 1 - Residuals vs Fitted Plot (Check linearity)
 plot(model, 1)
