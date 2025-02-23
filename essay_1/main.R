@@ -9,7 +9,15 @@ theme_set(theme_classic())
 scores <- read.csv("./dataset/Student_Marks.csv")
 colnames(scores) # Print column names
 
+# Visualization, pre-linear regression
+scatter_plot <- ggplot(scores, aes(x = time_study, y = Marks)) +
+  geom_point() +
+  ggtitle("Scatter Plot with Regression Line") + 
+  theme(plot.title = element_text(hjust = 0.5))
+scatter_plot
+
 # Split the dataset into test set and training set
+set.seed(37)
 split = sample.split(scores$time_study, SplitRatio = 0.8)
 training_set = subset(scores, split == TRUE)
 test_set = subset(scores, split == FALSE)
@@ -19,7 +27,23 @@ dim(training_set)
 dim(test_set)
 
 # Creating the model
-model <- lm(time_study ~ Marks, data = training_set)
+model <- lm(Marks ~ time_study, data = training_set)
+
+# Visualization of training set
+scatter_plot <- ggplot(training_set, aes(x = time_study, y = Marks)) +
+  geom_point() +
+  stat_smooth(method = lm, col = "slateblue", lwd=1.5) +
+  ggtitle("Training Set with Regression Line") + 
+  theme(plot.title = element_text(hjust = 0.5))
+scatter_plot
+
+# Visualization of test set
+scatter_plot <- ggplot(test_set, aes(x = time_study, y = Marks)) +
+  geom_point() +
+  stat_smooth(method = lm, col = "mediumaquamarine", lwd=1.5) +
+  ggtitle("Test Set with Regression Line") +
+  theme(plot.title = element_text(hjust = 0.5))
+scatter_plot
 
 # Analyzing the model
 summary(model) # returns all summary statistics
@@ -54,13 +78,5 @@ shapiro.test(residuals(model)) # p-value > 0.05 suggests normality
 
 # 5: Check Residuals Histogram
 hist(residuals(model), main = "Histogram of Residuals", col = "lightblue")
-
-# Visualization
-scatter_plot <- ggplot(test_set, aes(x = time_study, y = Marks)) +
-  geom_point() +
-  geom_smooth(method = "lm", col = "turquoise") +
-  ggtitle("Study time and Marks with Regression Line")
-
-
 
 
