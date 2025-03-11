@@ -1,3 +1,5 @@
+install.packages("tidyverse")
+library(tidyverse)
 advertising <- read.csv("Advertising.csv")
 str(advertising)
 head(advertising, 4)
