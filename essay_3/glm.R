@@ -1,24 +1,31 @@
-# Loading required R packages
+# Load required libraries
+library(caTools)
 library(tidyverse)
 library(caret)
 library(ggplot2)
 theme_set(theme_bw())
 
-# Load data set 
-raisins <- read.csv("/Users/katherineshi/math456/essay_3/Raisin_Dataset.csv")
-raisins <- na.omit(raisins)
+# Load data set
+raisins <- read.csv("Raisin_Dataset.csv")
+raisins <- na.omit(raisins) # Remove missing values
 
-# Split the data into training and test set
+# Convert Class to binary (Besni = 1, Kecimen = 0)
+raisins$Class <- ifelse(raisins$Class == "Besni", 1, 0)
+
+# Shuffle data
 set.seed(37)
-raisins <- sample(nrow(raisins))
+raisins <- raisins[sample(nrow(raisins)), ]
+
+# Split into training and test set
 split <- sample.split(raisins$Class, SplitRatio = 0.8)
 
-# training.samples <- raisins$Class %>% 
-  # createDataPartition(p = 0.8, list = False)
+train <- subset(raisins, split == TRUE)
+test <- subset(raisins, split == FALSE)
 
-train = subset(raisins, split == TRUE)
-test = subset(raisins, split == FALSE)
-
-mylogit <- glm(Class ~ Area + MajorAxisLength + MinorAxisLength + Eccentricity + ConvexArea + Extent + Perimeter, data = train, family = "binomial")
+# Logistic Regression Model
+mylogit <- glm(Class ~ Area + MajorAxisLength + MinorAxisLength + 
+                 Eccentricity + ConvexArea + Extent + Perimeter, 
+               data = train, 
+               family = "binomial")
 
 summary(mylogit)
