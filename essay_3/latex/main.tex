@@ -20,7 +20,7 @@ where we solve for $p$, the probability that a raisin belongs to the Besni class
 
 We choose the logit function as our link function due to its conversion of a problem involving linear parameters to a binary classification output by modeling probabilities for two classes. Our model, as with most linear models, lacks complexity as opposed to an alternative solution, such as one using neural networks. As such, we chose a dataset with simple parameters that have a linear relation to the output to amend for this fact.
 
-The R packages that we used were [FILL THIS OUT]
+The R packages that we used were \texttt{caTools, tidyverse, caret, ggplot2, dplyr, pROC, ggfortify}
 
 Our model was trained on [XXX] instances and performed with [ACCURACY]% accuracy on the testing set of [XXX] instances.
 
@@ -33,19 +33,22 @@ Eccentricity - It gives a measure of the eccentricity of the ellipse, which has 
 Convex area - Gives the number of pixels of the smallest convex shell of the region formed by the raisin.
 Extent - Gives the ratio of the region formed by the raisin to the total pixels in the bounding box.  Ranges from 0 to 1.
 Perimeter - It measures the environment by calculating the distance between the boundaries of the raisin and the pixels around it.
-\clearpage
 
 \section{Analysis}
-We used the \texttt{Advertising.csv} dataset from Trevor Hastie’s “An Introduction to Statistical Learning”  GitHub page\footnote{https://trevorhastie.github.io/ISLR/Advertising.csv}. The data contains two-hundred samples of advertised products and three features (\texttt{TV}, \texttt{radio}, and \texttt{newspaper}) and one variable (\texttt{sales}) for each product. Variables \texttt{TV}, \texttt{radio}, and \texttt{newspaper} indicates the amount spent on the advertising budget for TV, radio, and newspaper, respectively, and \texttt{sales} indicates the number of sales of the product\footnote{https://search.r-project.org/CRAN/refmans/glmtoolbox/html/advertising.html}. \texttt{TV} and \texttt{radio} areslightly skew right, while (\texttt{sales} is normally distributed.   \texttt{newspaper}) is extremely skew right.
-
+ The data contains two-hundred samples of advertised products and three features (\texttt{TV}, \texttt{radio}, and \texttt{newspaper}) and one variable (\texttt{sales}) for each product.\\
+ Variables \texttt{TV}, \texttt{radio}, and \texttt{newspaper} indicate the advertising budget for TV, radio, and newspaper, respectively. \texttt{sales} indicate the number of sales of the product\footnote{https://search.r-project.org/CRAN/refmans/glmtoolbox/html/advertising.html}. 
+\begin{figure}[!h]
+	\centering
 \includegraphics{example-image-a}
+\caption{\texttt{TV} and \texttt{radio} areslightly skew right, while (\texttt{sales} is normally distributed.   \texttt{newspaper}) is extremely skew right.}
+\end{figure}
 
 
-The \texttt{newspaper} column clearly has an outlier in the histogram, which we remove.  The data adequately passed all our tests of linearity (See Analysis Section), so no additional pruning was necessary.
+The \texttt{newspaper} column clearly has an outlier in the histogram, which we remove.  The data passed our tests for linearity (See Analysis Section), so no additional pruning was necessary.
 
 
 \section{References}
-
+We used the \texttt{Advertising.csv} dataset from Trevor Hastie’s “An Introduction to Statistical Learning”  GitHub page\footnote{https://trevorhastie.github.io/ISLR/Advertising.csv}.
 
 
 \end{document}

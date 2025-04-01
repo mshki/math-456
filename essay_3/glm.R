@@ -1,4 +1,11 @@
 # Load required libraries
+install.packages("devtools")
+devtools::install_github("cloudyr/rmote")
+
+library(rmote)
+start_rmote()
+install.packages("showtext")
+library(showtext)
 library(caTools)
 library(tidyverse)
 library(caret)
@@ -7,6 +14,7 @@ library(dplyr)
 library(pROC)
 library(ggfortify)
 theme_set(theme_bw())
+showtext_auto()
 
 # Load data set
 raisins <- read.csv("Raisin_Dataset.csv")
