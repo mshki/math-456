@@ -2,9 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
-.synctex.gz
-.out
-.fls
-.log
-.aux
-.fdb_latexmk
+*.synctex.gz
+*.out
+*.fls
+*.log
+*.aux
+*.fdb_latexmk
