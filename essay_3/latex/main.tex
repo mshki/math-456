@@ -1,0 +1,52 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath, amssymb, booktabs}
+\usepackage{hyperref}
+\usepackage{comment}
+\graphicspath{ {../imgs/} }
+
+\title{Three for two}
+\author{Jonathan Ferdinand, Devina Gera, Archimedes Li, Henry Liu, \\Katherine Shi, Sam Stevens}
+\date{\today}
+\begin{document}
+\maketitle
+
+\section{Introduction}
+Our model is a generalized linear regression model that uses the logit link function to perform a binary classification of raisins to either the Kecimen or Besni class. Our model uses seven independent variables, further detailed in the data description, to predict a probability as following:
+
+$$\ln \left( \frac{p}{1-p}\right) = \beta_0 + \sum_{i=1}^{7} \beta_i X_i$$
+
+where we solve for $p$, the probability that a raisin belongs to the Besni class. Our model then compares the probabilities $p$ and $1-p$, classifying the instance as Kecimen if $1-p > p$ and Besni otherwise.
+
+We choose the logit function as our link function due to its conversion of a problem involving linear parameters to a binary classification output by modeling probabilities for two classes. Our model, as with most linear models, lacks complexity as opposed to an alternative solution, such as one using neural networks. As such, we chose a dataset with simple parameters that have a linear relation to the output to amend for this fact.
+
+The R packages that we used were [FILL THIS OUT]
+
+Our model was trained on [XXX] instances and performed with [ACCURACY]% accuracy on the testing set of [XXX] instances.
+
+\section{Data Description}
+Our dataset is for raisin classification between Kecimen and Besni raisin types.  The dataset extracts 7 different features from 900 images of raisins, with 450 of each type of raisin.
+Area - Gives the number of pixels within the boundaries of the raisin.
+Major axis length - Gives the pixel length of the main axis, which is the longest line that can be drawn on the raisin.
+Minor axis length - Gives the pixel length of the small axis, which is the shortest line that can be drawn on the raisin.
+Eccentricity - It gives a measure of the eccentricity of the ellipse, which has the same moments as raisins.  Values closer to 0 indicate the raisin is more circular, and values closer to 1 indicate that the raisin is more elongated.
+Convex area - Gives the number of pixels of the smallest convex shell of the region formed by the raisin.
+Extent - Gives the ratio of the region formed by the raisin to the total pixels in the bounding box.  Ranges from 0 to 1.
+Perimeter - It measures the environment by calculating the distance between the boundaries of the raisin and the pixels around it.
+\clearpage
+
+\section{Analysis}
+We used the \texttt{Advertising.csv} dataset from Trevor Hastie’s “An Introduction to Statistical Learning”  GitHub page\footnote{https://trevorhastie.github.io/ISLR/Advertising.csv}. The data contains two-hundred samples of advertised products and three features (\texttt{TV}, \texttt{radio}, and \texttt{newspaper}) and one variable (\texttt{sales}) for each product. Variables \texttt{TV}, \texttt{radio}, and \texttt{newspaper} indicates the amount spent on the advertising budget for TV, radio, and newspaper, respectively, and \texttt{sales} indicates the number of sales of the product\footnote{https://search.r-project.org/CRAN/refmans/glmtoolbox/html/advertising.html}. \texttt{TV} and \texttt{radio} areslightly skew right, while (\texttt{sales} is normally distributed.   \texttt{newspaper}) is extremely skew right.
+
+\includegraphics{example-image-a}
+
+
+The \texttt{newspaper} column clearly has an outlier in the histogram, which we remove.  The data adequately passed all our tests of linearity (See Analysis Section), so no additional pruning was necessary.
+
+
+\section{References}
+
+
+
+\end{document}
+
