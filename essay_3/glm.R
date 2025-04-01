@@ -1,11 +1,4 @@
 # Load required libraries
-install.packages("caret")
-install.packages("caTools")
-install.packages("dplyr")
-install.packages("tidyverse")
-install.packages("ggfortify")
-install.packages("pROC")
-install.packages("ggplot2")
 library(caTools)
 library(tidyverse)
 library(caret)
@@ -76,7 +69,6 @@ ecc_plot <- ggplot(train.data, aes(x = Eccentricity, y = Class)) +
 print(ecc_plot)
 
 # ROC curve
-68
 roc_curve <- roc(test$Class, pred)
 plot(roc_curve, col = "cadetblue", main = "ROC Curve")
 auc_value <- auc(roc_curve)
