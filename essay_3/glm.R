@@ -1,10 +1,6 @@
 # Load required libraries
-install.packages("devtools")
-devtools::install_github("cloudyr/rmote")
 
-library(rmote)
-start_rmote()
-install.packages("showtext")
+
 library(showtext)
 library(caTools)
 library(tidyverse)
@@ -41,6 +37,7 @@ model <- glm(Class ~ Area + MajorAxisLength + MinorAxisLength +
 
 summary(model)
 
+dev.new()
 autoplot(model)
 
 # Predictions
@@ -54,6 +51,7 @@ print(conf_matrix)
 train.data <- train %>%
   mutate(prob = predict(model, type = "response"))
 
+dev.new()
 area_plot <- ggplot(train.data, aes(x = Area, y = Class)) +
   geom_point(alpha = 0.3) +  
   geom_smooth(method = "glm", method.args = list(family = "binomial")) +
@@ -65,6 +63,7 @@ area_plot <- ggplot(train.data, aes(x = Area, y = Class)) +
 
 print(area_plot)
 
+dev.new()
 ecc_plot <- ggplot(train.data, aes(x = Eccentricity, y = Class)) +
   geom_point(alpha = 0.3) +  
   geom_smooth(method = "glm", method.args = list(family = "binomial")) +
@@ -78,6 +77,7 @@ print(ecc_plot)
 
 # ROC curve
 roc_curve <- roc(test$Class, pred)
+dev.new()
 plot(roc_curve, col = "cadetblue", main = "ROC Curve")
 auc_value <- auc(roc_curve)
 cat("AUC:", auc_value, "\n")
@@ -85,6 +85,7 @@ cat("AUC:", auc_value, "\n")
 # Feature Importance
 importance <- summary(model)$coefficients[, "Estimate"]
 importance_df <- data.frame(Feature = names(importance), Estimate = importance)
+dev.new()
 ggplot(importance_df, aes(x = reorder(Feature, Estimate), y = Estimate)) +
   geom_bar(stat = "identity", fill = "pink") +
   coord_flip() +

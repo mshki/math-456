@@ -35,16 +35,27 @@ Extent - Gives the ratio of the region formed by the raisin to the total pixels 
 Perimeter - It measures the environment by calculating the distance between the boundaries of the raisin and the pixels around it.
 
 \section{Analysis}
- The data contains two-hundred samples of advertised products and three features (\texttt{TV}, \texttt{radio}, and \texttt{newspaper}) and one variable (\texttt{sales}) for each product.\\
- Variables \texttt{TV}, \texttt{radio}, and \texttt{newspaper} indicate the advertising budget for TV, radio, and newspaper, respectively. \texttt{sales} indicate the number of sales of the product\footnote{https://search.r-project.org/CRAN/refmans/glmtoolbox/html/advertising.html}. 
+We first scrambled the data, because the raisin data was sorted by raisin type. We then used 80\% of the data to train our model and 
 \begin{figure}[!h]
 	\centering
 \includegraphics{example-image-a}
-\caption{\texttt{TV} and \texttt{radio} areslightly skew right, while (\texttt{sales} is normally distributed.   \texttt{newspaper}) is extremely skew right.}
+\caption{}
 \end{figure}
+\clearpage
+\begin{verbatim}
+Coefficients:
+                  Estimate Std. Error z value Pr(>|z|)   
+(Intercept)     -3.164e+00  7.495e+00  -0.422  0.67296   
+Area             5.295e-04  1.065e-04   4.970 6.70e-07 **
+MajorAxisLength -4.471e-02  1.735e-02  -2.577  0.00997 **
+MinorAxisLength -8.355e-02  2.923e-02  -2.858  0.00426 **
+Eccentricity    -2.472e+00  5.232e+00  -0.473  0.63654   
+ConvexArea      -4.389e-04  9.095e-05  -4.826 1.39e-06 **
+ConvexArea      -4.389e-04  9.095e-05  -4.826 1.39e-06 **
+Extent          -1.127e+00  3.015e+00  -0.374  0.70857   
+Perimeter        3.480e-02  6.876e-03   5.060 4.19e-07 **
+\end{verbatim}
 
-
-The \texttt{newspaper} column clearly has an outlier in the histogram, which we remove.  The data passed our tests for linearity (See Analysis Section), so no additional pruning was necessary.
 
 
 \section{References}
