@@ -89,8 +89,27 @@ The ROC curve is shown in Figure \ref{fig:roc}. With an AUC of 0.9434, the model
 \caption{ROC curve for our model}
 \label{fig:roc}
 \end{figure} \\
-Our code is on the next page:
+Our code can be found in Appendix A.
 \clearpage
+
+
+
+\begin{thebibliography}{9}
+
+\bibitem{STHDA}
+\emph{Logistic regression essentials in R - articles - STHDA}. (2018, November 3). http://www.sthda.com/english/articles/36-classification-methods-essentials/151-logistic-regression-essentials-in-r
+
+\bibitem{Raisin}
+\emph{Raisin binary classification}. (2024, February 11). Kaggle. https://www.kaggle.com/datasets/nimapourmoradi/raisin-binary-classification/data
+
+
+\bibitem{advert}
+\emph{SOGA}. (n.d.). https://www.geo.fu-berlin.de/en/v/soga/Basics-of-statistics/Logistic-Regression/Logistic-Regression-in-R---An-Example/index.html
+
+
+\end{thebibliography}
+
+\section{Appendix A}
 \begin{verbatim}
 # Load required libraries
 library(caTools)
@@ -182,11 +201,5 @@ ggplot(importance_df, aes(x = reorder(Feature, Estimate), y = Estimate)) +
        x = "Feature",
        y = "Coefficient Estimate")
 \end{verbatim}
-
-
-\section{References}
-We used the \texttt{Advertising.csv} dataset from Trevor Hastie’s “An Introduction to Statistical Learning”  GitHub page\footnote{https://trevorhastie.github.io/ISLR/Advertising.csv}.
-
-
 \end{document}
 
