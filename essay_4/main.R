@@ -22,7 +22,10 @@ test_data  <-  raisins[-train_idx,]
 
 tree_model  <-  rpart(Class ~ .,data=train_data)
 
-#rpart.plot(tree_model)
+#tree_pred  <- predict(tree_model, data, type = "class")
+
+summary(tree_model)
+rpart.plot(tree_model)
 
 # Normalize the features (KNN performs better with scaled data)
 normalize <- function(x) {
@@ -37,8 +40,35 @@ test_data <- raisins_norm[-train_idx, ]
 train_labels <- raisins_labels[train_idx]
 test_labels <- raisins_labels[-train_idx]
 
+ctrl <- rfeControl(functions = caretFuncs,
+                   method = "cv",
+                   number = 10)
+
+
+rfe_result <- rfe(train_data, train_labels,
+                  sizes = 1:7,
+                  rfeControl = ctrl,
+                  method = "knn")
+
+# Print the results
+print(rfe_result)
+plot(rfe_result)
 knn_pred  <- knn(train = train_data, test = test_data, cl = train_labels)
 
 summary(knn_pred)
 
 confusionMatrix(knn_pred, as.factor(test_labels))
+
+## --- Create DataFrames for Plotting ---
+#knn_df <- data.frame(train_data, Predicted = knn_pred)
+#tree_df <- data.frame(features, Predicted = tree_pred)  # unscaled for readability
+#
+## --- Pair Plot for k-NN Output ---
+#ggpairs(knn_df, mapping = aes(color = Predicted), 
+#        columns = 1:4, title = "k-NN Classification (Pair Plot)")
+#
+## --- Pair Plot for Decision Tree Output ---
+#ggpairs(tree_df, mapping = aes(color = Predicted), 
+#        columns = 1:4, title = "Decision Tree Classification (Pair Plot)")
+#
+#
