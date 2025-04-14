@@ -1,3 +1,4 @@
+library("class")
 library("caret")
 library("rpart")
 library("rpart.plot")
@@ -19,6 +20,25 @@ train_idx  <- sample(1:nrow(raisins),size = 0.7 * nrow(raisins))
 train_data  <- raisins[train_idx,]
 test_data  <-  raisins[-train_idx,]
 
-tree_model  <-  tree(Class ~ .,data=train_data)
+tree_model  <-  rpart(Class ~ .,data=train_data)
 
-summary(tree_model)
+#rpart.plot(tree_model)
+
+# Normalize the features (KNN performs better with scaled data)
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+raisins_norm <- as.data.frame(lapply(raisins[1:7], normalize))
+raisins_labels <- raisins$Class
+
+train_data <- raisins_norm[train_idx, ]
+test_data <- raisins_norm[-train_idx, ]
+train_labels <- raisins_labels[train_idx]
+test_labels <- raisins_labels[-train_idx]
+
+knn_pred  <- knn(train = train_data, test = test_data, cl = train_labels)
+
+summary(knn_pred)
+
+confusionMatrix(knn_pred, as.factor(test_labels))
