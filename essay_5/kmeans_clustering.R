@@ -4,8 +4,11 @@ library(cluster)    # clustering algorithms
 library(factoextra) # clustering algorithms & visualization
 
 # data preparation
-idk <- read.csv("idk")
-df <- scale(idk)
+df <- read.csv("data/SP500.csv")
+df <- df[, -which(names(df) == "Date")]
+df <- df[, -which(names(df) == "Ticker")]
+df <- na.omit(df)
+
 
 # estimating optimal number of clusters
 ## elbow method 
@@ -21,9 +24,9 @@ km.res <- kmeans(df, 4, nstart=25)
 print(km.res)
 
 ## mean of each feature
-aggregate(idk, by=list(cluster=km.res$cluster), mean)
+aggregate(df, by=list(cluster=km.res$cluster), mean)
 
-dd <- cbind(idk, cluster = km.res$cluster)
+dd <- cbind(df, cluster = km.res$cluster)
 head(dd)
 
 ## cluster stats for each observation
