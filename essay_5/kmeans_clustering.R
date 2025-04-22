@@ -4,14 +4,15 @@ library(cluster)    # clustering algorithms
 library(factoextra) # clustering algorithms & visualization
 library(ggplot2)
 library(dplyr)
+library(caTools)
 
 # Data Preparation
 data <- read.csv("data/SP500.csv")
+data <- na.omit(data)
 
 ## Data Cleaning
 df <- data[, -which(names(data) == "Date")]
 df <- df[, -which(names(df) == "Ticker")]
-df <- na.omit(df)
 
 ## Scale Values
 scaled <- scale(df)
@@ -61,3 +62,33 @@ km.res$centers # cluster means
 # Visualize
 fviz_cluster(km.res, scaled[, -5],
              palette = "Set2", ggtheme = theme_minimal())
+
+# Historical vs. Predicted Closing Price Using Cluster-Based LM
+
+## Calculate prev_close
+df$cluster <- km.res$cluster
+
+pred <- df %>%
+  mutate(prev_close = lag(Close)) %>%
+  na.omit()
+
+split <- sample.split(pred$cluster, SplitRatio = 0.8)
+train <- subset(pred, split == TRUE)
+test <- subset(pred, split == FALSE)
+
+model <- lm(Close ~ cluster + prev_close, data = train)
+
+## Predict next day's close
+test$predicted_close <- predict(model, newdata = test)
+
+## Plot Actual v Predicted 
+test$index <- 1:nrow(test)
+
+ggplot(test, aes(x = index)) +
+  geom_line(aes(y = Close, color = "Actual")) +
+  geom_line(aes(y = predicted_close, color = "Predicted")) +
+  ggtitle("Closing Price Prediction (by day)") +
+  ylab("Price") +
+  xlab("Day") +
+  scale_color_manual(values = c("Actual" = "slateblue", "Predicted" = "pink")) +
+  theme_minimal()
