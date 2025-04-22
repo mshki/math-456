@@ -3,6 +3,7 @@ library(ggplot2)
 library(caTools)
 library(GGally)
 library(factoextra)
+library(caret)
 
 df <- read.csv("data/SP500.csv")
 
@@ -77,10 +78,6 @@ assign_cluster <- function(x, centers) {
 test$cluster <- apply(test_scaled, 1, assign_cluster, centers = km.res$centers)
 test$cluster <- as.factor(test$cluster)
 
-# Predict next closing price using clusters 
-price_model <- lm(Close ~ cluster + prev_close, data = train)
-test$predicted_close <- predict(price_model, newdata = test)
-
 # Predict return using clusters 
 return_model <- lm(Returns ~ cluster + prev_return, data = train)
 test$predicted_return <- predict(return_model, newdata = test)
@@ -96,6 +93,14 @@ ggplot(test, aes(x = index)) +
   scale_color_manual(values = c("Actual Return" = "pink", "Predicted Return" = "slateblue")) +
   theme_minimal()
 
+# Analyzing the model
+summary(return_model) 
+
+## Calculate prediction accuracy
+data.frame(R2 = R2(test$predicted_return, test$Returns),  
+           MSE = MAE(test$predicted_return, test$Returns))
+
+# Diagonal Plots
 plot_data <- test[, 2:8]
 plot_data$Predicted <- test$predicted_return
 ggpairs(plot_data, mapping = aes(y = Predicted, color = "pink"),
