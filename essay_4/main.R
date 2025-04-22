@@ -6,6 +6,7 @@ library("class")
 library("ggplot2")
 library("tree")
 library("randomForest")
+library("GGally")
 
 # Load data set
 raisins <- read.csv("data/Raisin_Dataset.csv")
@@ -40,24 +41,28 @@ test_data <- raisins_norm[-train_idx, ]
 train_labels <- raisins_labels[train_idx]
 test_labels <- raisins_labels[-train_idx]
 
-ctrl <- rfeControl(functions = caretFuncs,
-                   method = "cv",
-                   number = 10)
-
-
-rfe_result <- rfe(train_data, train_labels,
-                  sizes = 1:7,
-                  rfeControl = ctrl,
-                  method = "knn")
-
 # Print the results
 print(rfe_result)
 plot(rfe_result)
-knn_pred  <- knn(train = train_data, test = test_data, cl = train_labels)
+
+train_subset <- train_data[, c("MajorAxisLength", "Extent", "Eccentricity", "Area", "ConvexArea")]
+test_subset <- test_data[, c("MajorAxisLength", "Extent", "Eccentricity", "Area", "ConvexArea")]
+knn_pred  <- knn(train = train_data, test = test_data, cl = train_labels,k=1)
 
 summary(knn_pred)
 
 confusionMatrix(knn_pred, as.factor(test_labels))
+
+train_idx  <- sample(1:nrow(raisins),size = 0.7 * nrow(raisins))
+train_data  <- raisins[train_idx,]
+test_data  <-  raisins[-train_idx,]
+
+tree_model  <-  rpart(Class ~ .,data=train_data)
+
+tree_pred  <- predict(tree_model, test_data, type = "vector")
+
+confusion_matrix <- table(Predicted = tree_pred, Actual = as.factor(test_labels))
+print(confusion_matrix)
 
 ## --- Create DataFrames for Plotting ---
 #knn_df <- data.frame(train_data, Predicted = knn_pred)
@@ -72,3 +77,10 @@ confusionMatrix(knn_pred, as.factor(test_labels))
 #        columns = 1:4, title = "Decision Tree Classification (Pair Plot)")
 #
 #
+
+plot_data <- test_data[, 1:7]
+plot_data$Predicted <- knn_pred
+ggpairs(plot_data, mapping = aes(color = Predicted),
+        columns = 1:7,   # only the features in the plot
+        title = "Diagonal Plot Colored by Predicted Class (kNN)")
+
