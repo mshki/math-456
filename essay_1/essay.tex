@@ -16,12 +16,21 @@
 \maketitle
 
 \section{Introduction}
-Our model is a simple linear regression, which is a function of 1 feature, $X_1$, that predicts a label $\hat{y}$ in the form of $\hat{y} = \beta_1X_1 + \beta_0$.  The benefits of using a linear regression are its simplicity and high level of explainability.  This makes it a good candidate for modeling a simple relationship between two variables.  However, a drawback to simple linear regressions are their low complexity.  We selected a dataset that fits these constraints. \\
+Our model is a simple linear regression, which is a function of 1 feature, $X_1$, that predicts a label $\hat{y}$ in the form of $\hat{y} = \beta_1X_1 + \beta_0$.  
+The benefits of using a linear regression are its simplicity and high level of explainability.  
+This makes it a good candidate for modeling a simple relationship between two variables.  
+However, a drawback to simple linear regressions are their low complexity.  We selected a dataset that fits these constraints. \\
 
 \noindent The R packages that we used were tidyverse and ggpubr for visualization, lmtest for linear regression diagnostics, caret for linear regression training, and caTools for data analysis and manipulation.
 
 \section{Data Description}
-Our dataset is “Student Marks Dataset” which has data on 100 different students and their marks.  The features in the dataset are the student’s study time in hours and the number of courses taken by the student.  The student’s study time ranges from $[0.1, 7.96]$, and the number of courses taken ranges from $[3, 8]$.  However, for the simple linear regression, we only use the feature of study time.  The label is the overall marks of the students, which ranges from $[5.61, 55.3]$.  A scatter plot for our chosen data is shown below. (Figure \ref{fig:scatterplot}). The box plots of marks and time studied are shown in Figure \ref{fig:boxplots} \\
+The dataset we used was one called “Student Marks Dataset” from Kaggle, which was sourced from the UCI Machine Learning Repository. The dataset consists of data on 100 different students' marks, study times, and number of courses.  
+The features in the dataset are the student’s study time in hours and the number of courses taken by the student.  
+The student’s study time ranges from $[0.1, 7.96]$, and the number of courses taken ranges from $[3, 8]$. 
+However, because our objective is to implement a simple linear regression model, we decided to only use one feature: study time.
+The label is the overall marks of the students, which ranges from $[5.61, 55.3]$.  
+A scatter plot for our chosen data is shown below. 
+(Figure \ref{fig:scatterplot}). The box plots of marks and time studied are shown in Figure \ref{fig:boxplots} \\
 \noindent Visually, there is a strong correlation between Marks and time studied. \\
 
 \noindent Notice how the distribution of marks (Figure \ref{fig:boxplotMarks}) is skewed left while the distribution of time studied (Figure \ref{fig:boxplotTime}) is symmetric.
