@@ -30,11 +30,12 @@ The features in the dataset are the student’s study time in hours and the numb
 The student’s study time ranges from $[0.1, 7.96]$, and the number of courses taken ranges from $[3, 8]$. 
 However, because our objective is to implement a simple linear regression model, we decided to only use one feature: study time.
 The label is the overall marks of the students, which ranges from $[5.61, 55.3]$.  
-A scatter plot for our chosen data is shown below. 
-(Figure \ref{fig:scatterplot}). The box plots of marks and time studied are shown in Figure \ref{fig:boxplots} \\
-\noindent Visually, there is a strong correlation between Marks and time studied. \\
+A scatter plot for our chosen data is shown below in Figure \ref{fig:scatterplot}. 
+The box plots of marks and time studied are shown in Figure \ref{fig:boxplots}. \\
 
-\noindent Notice how the distribution of marks (Figure \ref{fig:boxplotMarks}) is skewed left while the distribution of time studied (Figure \ref{fig:boxplotTime}) is symmetric.
+\noindent There are three important observations we make. The first is that as shown in Figure \ref{fig:boxplots}, there are no outliers. Therefore, we decided not to clean the data.
+Second, we notice a strong correlation between Marks and time studied in Figure \ref{fig:scatterplot}. \\
+And finally, we notice that the distribution of marks (Figure \ref{fig:boxplotMarks}) is skewed left while the distribution of time studied (Figure \ref{fig:boxplotTime}) is symmetric.
 \clearpage
 
 \begin{figure}[h]
