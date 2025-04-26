@@ -85,6 +85,22 @@ Our dataset of 100 observations was divided into 80\% training data and 20\% tes
 
 \noindent This analysis identified observations 5, 65, and 99 as influential points, though we retained them in our model as they appeared to be valid data points rather than errors.\\
 
+\noindent Before interpreting the results of our model, it is important to ensure that the assumptions of simple linear regression are reasonably satisfied. The primary assumptions are:
+
+\begin{itemize}
+    \item \textbf{Linearity:} The relationship between the independent variable (study time) and the dependent variable (marks) should be linear. If this assumption does not hold, the model will underperform on unseen data.
+    
+    \item \textbf{Independence of Errors:} The residuals (errors) should be independent of each other. Violation of this assumption, such as through autocorrelation, can cause the model to fail to generalize properly.
+    
+    \item \textbf{Homoscedasticity:} The residuals should have constant variance across all levels of the independent variable. Heteroscedasticity may result in the model performing inconsistently across different study times.
+    
+    \item \textbf{Normality of Residuals:} The residuals should be approximately normally distributed. If this assumption is violated, confidence intervals and hypothesis tests may become unreliable, and the model may overfit the training data but perform poorly during validation.
+    
+    \item \textbf{No Multicollinearity:} The independent variables should not be highly correlated with each other. Since we are using only one predictor (study time), multicollinearity is not a concern in this case. However, in multiple regression scenarios, high multicollinearity can lead to unstable coefficient estimates and misleading validation results.
+\end{itemize}
+
+\noindent Based on visual inspection of the scatter plot and boxplots, and given the simplicity of the dataset (one predictor and no apparent outliers), these assumptions are reasonably met for our model.
+
 % \noindent Our model achieved an $R^2$ value of 0.8882, indicating that approximately 89\% of the variance in student marks can be explained by study time alone. The Root Mean Square Error (RMSE) was 5.42 for the training data and 3.073, showing good generalization. \\
 
 \noindent As shown in the scatter plot (Figure \ref{fig:scatterplot}), there is a strong positive correlation between study time and marks. The boxplots (Figure \ref{fig:boxplots}) reveal that the marks distribution is positively skewed with a median around 20, while the study time distribution is more symmetrical with a median of about 4 hours. \\
