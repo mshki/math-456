@@ -1,4 +1,5 @@
 # Load required packages
+install.packages("ggpubr")
 library(tidyverse) # For data manipulation and visualization
 library(ggpubr) # Creates publication ready-plot
 library(caTools) # For data analysis and manipulation tasks
