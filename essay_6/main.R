@@ -20,7 +20,7 @@ head(CAT)
 
 # 2 Calculate (log) returns
 data <- cbind(
-  Price = MSFT$MSFT.Close,
+  Price = CAT$CAT.Close,
   Return=CalculateReturns(CAT$CAT.Close, method = 'log')) 
 colnames(data) <- c('Price','Return')
 head(data)
@@ -79,8 +79,8 @@ Box.test(na.omit(data$Return), type = "Ljung-Box")
 #          Thus Return series is not independent
 
 # 3.5 Autocorrelation of Absolute/Squaare Return
-a<- ggAcf(abs(na.omit(data$Return)), col='violetred1',main='Acf of Absolute Return of MSFT')
-p<- ggPacf(abs(na.omit(data$Return)),col='thistle1',main='PAcf of Absolute Return of MSFT')
+a<- ggAcf(abs(na.omit(data$Return)), col='violetred1',main='Acf of Absolute Return of CAT')
+p<- ggPacf(abs(na.omit(data$Return)),col='thistle1',main='PAcf of Absolute Return of CAT')
 grid.arrange(a,p, ncol = 2, nrow = 1)
 # Observe: Absolute Return series show slow decay of auto correlation 
 
