@@ -1,41 +1,35 @@
-# Load required libraries
-library(showtext)
-library(caTools)
+# Load libraries
+library(showtext) # For rendering text 
+library(caTools) # For data manipulation 
 library(tidyverse)
-library(caret)
-library(ggplot2)
-library(dplyr)
-library(pROC)
-library(ggfortify)
+library(caret) # For classification training 
+library(ggplot2) # For creating graphs
+library(dplyr) # For dataframe manipulation
+library(pROC) # For displaying and analyzing ROC curves
+library(ggfortify) # For plotting GLM 
 theme_set(theme_bw())
 showtext_auto()
 
-# Load data set
+# Load data set 
 raisins <- read.csv("Raisin_Dataset.csv")
 raisins <- na.omit(raisins) # Remove missing values
 
 # Convert Class to binary (Besni = 1, Kecimen = 0)
 raisins$Class <- ifelse(raisins$Class == "Besni", 1, 0)
 
-# Shuffle data
+# Train-test split
 set.seed(37)
 raisins <- raisins[sample(nrow(raisins)), ]
-
-# Split into training and test set
 split <- sample.split(raisins$Class, SplitRatio = 0.8)
-
 train <- subset(raisins, split == TRUE)
 test <- subset(raisins, split == FALSE)
 
-# Model
+# Fit model
 model <- glm(Class ~ Area + MajorAxisLength + MinorAxisLength + 
                  Eccentricity + ConvexArea + Extent + Perimeter, 
                data = train, 
                family = "binomial")
-
 summary(model)
-
-dev.new()
 autoplot(model)
 
 # Predictions
@@ -46,10 +40,10 @@ pred_class <- ifelse(pred > 0.5, "Besni", "Kecimen")
 conf_matrix <- table(Predicted = pred_class, Actual = test$Class)
 print(conf_matrix)
 
+# Logistic Regression Model
 train.data <- train %>%
   mutate(prob = predict(model, type = "response"))
 
-dev.new()
 area_plot <- ggplot(train.data, aes(x = Area, y = Class)) +
   geom_point(alpha = 0.3) +  
   geom_smooth(method = "glm", method.args = list(family = "binomial")) +
@@ -58,10 +52,8 @@ area_plot <- ggplot(train.data, aes(x = Area, y = Class)) +
     x = "Raisin Area",
     y = "Probability of being Besni"
   )
+area_plot
 
-print(area_plot)
-
-dev.new()
 ecc_plot <- ggplot(train.data, aes(x = Eccentricity, y = Class)) +
   geom_point(alpha = 0.3) +  
   geom_smooth(method = "glm", method.args = list(family = "binomial")) +
@@ -70,12 +62,10 @@ ecc_plot <- ggplot(train.data, aes(x = Eccentricity, y = Class)) +
     x = "Eccentricity",
     y = "Probability of being Besni"
   )
-
-print(ecc_plot)
+ecc_plot
 
 # ROC curve
 roc_curve <- roc(test$Class, pred)
-dev.new()
 plot(roc_curve, col = "cadetblue", main = "ROC Curve")
 auc_value <- auc(roc_curve)
 cat("AUC:", auc_value, "\n")
@@ -83,7 +73,6 @@ cat("AUC:", auc_value, "\n")
 # Feature Importance
 importance <- summary(model)$coefficients[, "Estimate"]
 importance_df <- data.frame(Feature = names(importance), Estimate = importance)
-dev.new()
 ggplot(importance_df, aes(x = reorder(Feature, Estimate), y = Estimate)) +
   geom_bar(stat = "identity", fill = "pink") +
   coord_flip() +
