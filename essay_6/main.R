@@ -205,20 +205,23 @@ plot(fore_boot,which=3)
 # 8 Model Evaluation
 # 8.1 Forecast accuracy metrics: ME, RMSE, MAE, MPE, MAPE
 acc_forecast <- accuracy(forecast_ret, as.numeric(test_rets))
-fore_boot_ret
 acc_fore_roll <- accuracy(fore_roll_ret, as.numeric(test_rets))
-acc_fore_boot <- accuracy(fore_boot_ret, as.numeric(test_rets))
+#acc_fore_boot <- accuracy(fore_boot_ret, as.numeric(test_rets))
 
 acc_forecast
 acc_fore_roll
-acc_fore_boot
+#acc_fore_boot
 
 # 8.2 Test whether forecast errors have zero mean (t‑test)
-errors <- as.numeric(test_rets) - forecast_ret
-t.test(errors)
 #    – H₀: mean(error) = 0
+fore_errors <- as.numeric(test_rets) - forecast_ret
+t.test(fore_errors)
+fore_roll_errors <- as.numeric(test_rets) - fore_roll_ret
+t.test(fore_roll_errors)
 
 # 8.3 Check for autocorrelation in errors (Ljung‑Box)
-Box.test(errors, type = "Ljung-Box")
 #    – H₀: no autocorrelation up to default lag
+Box.test(fore_errors, type = "Ljung-Box")
+Box.test(fore_roll_errors, type = "Ljung-Box")
+
 
