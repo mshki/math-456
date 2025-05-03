@@ -57,7 +57,7 @@ pacf(na.omit(data$Return), main='Partial Auto Correlation of Return Values',col=
 #          Thus, Return series are influenced by previous days Return
 
 # 3.3 Normality Test 
-ggplot(aes(Return), data=data) + geom_histogram(bins = 100,col='black',fill='violetred1') + ggtitle('Return of MSFt')
+ggplot(aes(Return), data=data) + geom_histogram(bins = 100,col='black',fill='violetred1') + ggtitle('Return of CAT')
 skewness(data$Return); kurtosis(data$Return)
 # Observe: Returns are not normally distributed!
 #          Negative skew indicates Leptokurtic distribution
