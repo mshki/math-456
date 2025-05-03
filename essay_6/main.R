@@ -15,7 +15,7 @@ library(forecast) # For analyzing forecasts
 library(rugarch) # For univariate GARCH models
 
 # 1 Get Data
-getSymbols("CAT", src="yahoo", periodicity = "daily", from = "1986-03-13", to = "2021-05-31")
+getSymbols("CAT", src="yahoo", periodicity = "daily", from = "1986-03-13", to = "2017-05-31")
 head(CAT)
 
 # 2 Calculate (log) returns
@@ -26,7 +26,7 @@ colnames(data) <- c('Price','Return')
 head(data)
 
 # 3 Verify Assumptions
-plot(na.omit(data$Price), ylab='CAT Closing Price',main='Caterpillar Stock Price from 1986-2021',col='pink')
+plot(na.omit(data$Price), ylab='CAT Closing Price',main='Caterpillar Stock Price from 1986-2017',col='pink')
 # Observe: The price increases over time despite showing volatility 
 #          Mean and variance change over time.
 #          Thus, stock price is NOT stationary over time
@@ -162,7 +162,7 @@ AIC = c(aic_1, aic_2, aic_3, aic_4, aic_5, aic_6, aic_7, aic_8)
 which.min(model[,'AIC'])
 # Observe: The output was 5, so our selected model is fit_garch_5
 
-# 6 Analyze Selected Model 
+# 6 Analyze Selected Model
 #      Statistics & Plot
 fit_garch_5
 plot(fit_garch_5,which='all')   
@@ -173,13 +173,22 @@ persistence(fit_garch_5)
 #      Convergence of the Model
 print(convergence(fit_garch_5))
 
-# 7 Forecasting (50 days ahead)
-forecast_1 <-ugarchforecast(fit_garch_5,data=data,n.ahead=50)
-forecast_1
+# 7 Forecasting
+test_start <- as.Date("2017-06-01")
+test_end   <- as.Date("2021-05-01")
+
+rets <- data$Return
+test_rets  <- window(rets, start = test_start, end = test_end)
+n.out <- length(test_rets)
+
+forecast <-ugarchforecast(fit_garch_5,data=data,n.ahead=n.out)
+forecast_ret <- as.numeric(forecast@forecast$seriesFor)
+forecast
 
 #      Rolling Forecast 
 fit_roll <- ugarchfit(CAT_garch_5, data= na.omit(data$Return),out.sample =500)
-fore_roll <- ugarchforecast(fit_roll, n.ahead=50, n.roll=50)
+fore_roll <- ugarchforecast(fit_roll, n.ahead=n.out, n.roll=50)
+fore_roll_ret <- as.numeric(fore_roll@forecast$seriesFor)
 fore_roll
 
 par(mfrow=c(1,2))
@@ -188,9 +197,28 @@ plot(fore_roll,which=2)
 
 #      Bootstrap Forecast
 par(mfrow=c(1,2))
-fore_boot <- ugarchboot(fit_garch_5,data = na.omit(data$Return), method = c("Partial", "Full")[1], n.ahead = 50, n.bootpred = 500)
+fore_boot <- ugarchboot(fit_garch_5,data = na.omit(data$Return), method = c("Partial", "Full")[1], n.ahead = n.out, n.bootpred = 500)
+fore_boot_ret <- t(as.data.frame(fore_boot, which = "series", type = "summary"))
 plot(fore_boot,which=2)
 plot(fore_boot,which=3)
-head(sigma(forecast_1))
 
+# 8 Model Evaluation
+# 8.1 Forecast accuracy metrics: ME, RMSE, MAE, MPE, MAPE
+acc_forecast <- accuracy(forecast_ret, as.numeric(test_rets))
+fore_boot_ret
+acc_fore_roll <- accuracy(fore_roll_ret, as.numeric(test_rets))
+acc_fore_boot <- accuracy(fore_boot_ret, as.numeric(test_rets))
+
+acc_forecast
+acc_fore_roll
+acc_fore_boot
+
+# 8.2 Test whether forecast errors have zero mean (t‑test)
+errors <- as.numeric(test_rets) - forecast_ret
+t.test(errors)
+#    – H₀: mean(error) = 0
+
+# 8.3 Check for autocorrelation in errors (Ljung‑Box)
+Box.test(errors, type = "Ljung-Box")
+#    – H₀: no autocorrelation up to default lag
 
