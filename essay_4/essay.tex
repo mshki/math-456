@@ -1,5 +1,18 @@
 \documentclass{article}
 \usepackage{graphicx} % Required for inserting images
+\usepackage{subcaption}
+\usepackage{amsmath, amssymb, booktabs}
+\usepackage{hyperref}
+\usepackage{comment}
+\usepackage{xcolor}  % Required for color customization
+\hypersetup{
+  colorlinks=true,  % Activates colored links
+  linkcolor=blue,   % Color of internal links (sections, pages, etc.)
+  citecolor=blue,   % Color of citation links
+  urlcolor=blue     % Color of external links (URLs)
+}
+\graphicspath{ {./figures/} }
+
 
 \title{The CLASS-ification of Raisins: Capitalism Reaches Our Farms}
 \author{Jonathan Ferdinand, Devina Gera, Archimedes Li, Henry Liu, \\Katherine Shi, Sam Stevens}
@@ -61,13 +74,13 @@ We used trial and error to find that $k = 5$ worked the best for our model with 
 \section{Model Evaluation}
 
 \subsection{Decision Tree Model}
-We trained our decision tree to find the split points shown in figure 2.
+We trained our decision tree to find the split points shown in figure \ref{fig:treePlot}.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\linewidth]{twee.png}
+    \includegraphics[width=0.7\linewidth]{tree_plot.png}
     \caption{Diagram of decision choices at each level of trained decision tree}
-    \label{fig:enter-label}
+    \label{fig:treePlot}
 \end{figure}
 
 Since decision trees are able to run on all features, we did not need to perform any subset selection.
