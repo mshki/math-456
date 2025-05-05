@@ -1,4 +1,5 @@
 # Load required libraries
+install.packages("Cairo")
 library("Cairo")
 library("class")
 library("caret")
