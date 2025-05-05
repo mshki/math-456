@@ -260,7 +260,8 @@ raisins <- read.csv("data/Raisin_Dataset.csv")
 raisins <- na.omit(raisins)  # Remove missing values
 
 # Convert Class to binary: Besni = 1, Kecimen = 0
-raisins$Class <- ifelse(raisins$Class == "Besni", 1, 0)
+raisins$Class <- factor(raisins$Class, levels = c("Kecimen", "Besni"))
+#raisins$Class <- ifelse(raisins$Class == "Besni", 1, 0)
 
 # --- Normalize numeric features for KNN ---
 normalize <- function(x) {
@@ -333,12 +334,29 @@ ggpairs(plot_data, mapping = aes(color = Predicted),
 dev.off()
 
 #  Decision Tree model for comparison ---
-print("%%%%%% DECISION TREE %%%%%%")
-tree_model <- rpart(Class ~ ., data = raisins[train_idx,])
-CairoPNG("figures/tree_plot.png", width = 800, height = 600)
-rpart.plot(tree_model)
+#raisins$Class <- factor(raisins$Class, levels = c(0, 1))
+# --- Cross-validation for Decision Tree ---
+set.seed(123)
+tree_cv_model <- train(Class ~ ., 
+                       data = raisins,
+                       method = "rpart",
+                       trControl = train_control,  # already defined as 10-fold CV
+                       tuneLength = 10)  # explore different complexity parameters (cp)
+
+# Output the best model and its complexity parameter
+print(tree_cv_model)
+CairoPNG("figures/tree_cv_plot.png", width = 800, height = 600)
+plot(tree_cv_model)
 dev.off()
-tree_pred <- predict(tree_model, raisins[-train_idx,], type = "vector")
+
+# Use the best tree model to make predictions on the test set
+tree_best_model <- tree_cv_model$finalModel
+
+print("%%%%%% DECISION TREE %%%%%%")
+CairoPNG("figures/tree_plot.png", width = 800, height = 600)
+rpart.plot(tree_best_model)
+dev.off()
+tree_pred <- predict(tree_best_model, raisins[-train_idx,], type = "vector")
 conf_matrix_tree <- table(Predicted = round(tree_pred), Actual = test_labels)
 accuracy <- sum(diag(conf_matrix_tree))/sum(conf_matrix_tree)
 print(conf_matrix_tree)
@@ -356,13 +374,13 @@ Outer resampling method: Cross-Validated (10 fold)
 Resampling performance over subset size:
 
  Variables Accuracy  Kappa AccuracySD KappaSD Selected
-         1   0.7922 0.5844    0.04773 0.09547         
-         2   0.8378 0.6756    0.04294 0.08587         
-         3   0.8478 0.6956    0.03921 0.07843         
-         4   0.8500 0.7000    0.04099 0.08198         
-         5   0.8500 0.7000    0.03750 0.07499         
-         6   0.8544 0.7089    0.03757 0.07514         
-         7   0.8578 0.7156    0.03733 0.07466        *
+         1   0.7911 0.5822    0.06149  0.1230         
+         2   0.8344 0.6689    0.06467  0.1293         
+         3   0.8433 0.6867    0.05480  0.1096         
+         4   0.8389 0.6778    0.05599  0.1120         
+         5   0.8456 0.6911    0.05603  0.1121         
+         6   0.8500 0.7000    0.06091  0.1218         
+         7   0.8544 0.7089    0.06096  0.1219        *
 
 The top 5 variables (out of 7):
    Perimeter, MajorAxisLength, Eccentricity, ConvexArea, Area
@@ -372,7 +390,7 @@ k-Nearest Neighbors
 
 900 samples
   7 predictors
-  2 classes: '0', '1' 
+  2 classes: 'Kecimen', 'Besni' 
 
 No pre-processing
 Resampling: Cross-Validated (10 fold) 
@@ -380,26 +398,26 @@ Summary of sample sizes: 810, 810, 810, 810, 810, 810, ...
 Resampling results across tuning parameters:
 
   k   Accuracy   Kappa    
-   5  0.8466667  0.6933333
-   7  0.8622222  0.7244444
-   9  0.8644444  0.7288889
-  11  0.8600000  0.7200000
-  13  0.8544444  0.7088889
-  15  0.8588889  0.7177778
-  17  0.8622222  0.7244444
-  19  0.8633333  0.7266667
+   5  0.8433333  0.6866667
+   7  0.8500000  0.7000000
+   9  0.8544444  0.7088889
+  11  0.8522222  0.7044444
+  13  0.8577778  0.7155556
+  15  0.8600000  0.7200000
+  17  0.8633333  0.7266667
+  19  0.8622222  0.7244444
   21  0.8633333  0.7266667
-  23  0.8677778  0.7355556
-  25  0.8655556  0.7311111
-  27  0.8633333  0.7266667
-  29  0.8611111  0.7222222
-  31  0.8611111  0.7222222
-  33  0.8600000  0.7200000
-  35  0.8622222  0.7244444
-  37  0.8633333  0.7266667
-  39  0.8644444  0.7288889
-  41  0.8677778  0.7355556
-  43  0.8644444  0.7288889
+  23  0.8611111  0.7222222
+  25  0.8622222  0.7244444
+  27  0.8622222  0.7244444
+  29  0.8588889  0.7177778
+  31  0.8588889  0.7177778
+  33  0.8611111  0.7222222
+  35  0.8600000  0.7200000
+  37  0.8588889  0.7177778
+  39  0.8611111  0.7222222
+  41  0.8633333  0.7266667
+  43  0.8611111  0.7222222
 
 Accuracy was used to select the optimal model using the largest value.
 The final value used for the model was k = 41.
@@ -409,9 +427,9 @@ Best K: 41
 Confusion Matrix and Statistics
 
           Reference
-Prediction   0   1
-         0 119  27
-         1   9 115
+Prediction Kecimen Besni
+   Kecimen     119    27
+   Besni         9   115
                                           
                Accuracy : 0.8667          
                  95% CI : (0.8202, 0.9048)
@@ -434,18 +452,45 @@ Prediction   0   1
    Detection Prevalence : 0.5407          
       Balanced Accuracy : 0.8698          
                                           
-       'Positive' Class : 0               
+       'Positive' Class : Kecimen         
                                           
 null device                                                                                                                     
+          1 
+CART 
+
+900 samples
+  7 predictors
+  2 classes: 'Kecimen', 'Besni' 
+
+No pre-processing
+Resampling: Cross-Validated (10 fold) 
+Summary of sample sizes: 810, 810, 810, 810, 810, 810, ... 
+Resampling results across tuning parameters:
+
+  cp          Accuracy   Kappa    
+  0.00000000  0.8388889  0.6777778
+  0.08098765  0.8533333  0.7066667
+  0.16197531  0.8533333  0.7066667
+  0.24296296  0.8533333  0.7066667
+  0.32395062  0.8533333  0.7066667
+  0.40493827  0.8533333  0.7066667
+  0.48592593  0.8533333  0.7066667
+  0.56691358  0.8533333  0.7066667
+  0.64790123  0.8533333  0.7066667
+  0.72888889  0.6666667  0.3333333
+
+Accuracy was used to select the optimal model using the largest value.
+The final value used for the model was cp = 0.6479012.
+null device 
           1 
 [1] "%%%%%% DECISION TREE %%%%%%"
 null device 
           1 
          Actual
-Predicted   0   1
-        0 113  29
-        1  15 113
-Accuracy of Tree Model: 0.837037 
+Predicted Kecimen Besni
+        1     116    27
+        2      12   115
+Accuracy of Tree Model: 0.8555556 
   \end{verbatim}
 
 \end{thebibliography}
