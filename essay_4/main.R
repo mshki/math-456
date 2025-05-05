@@ -24,8 +24,27 @@ raisins_norm <- as.data.frame(lapply(raisins[1:7], normalize))
 raisins_labels <- raisins$Class
 raisins_norm$Class <- as.factor(raisins_labels)  # caret expects factors
 
+# --- Feature selection using RFE (Recursive Feature Elimination) ---
+set.seed(456)
+
+# Define RFE control
+rfe_ctrl <- rfeControl(functions = rfFuncs,  # Use random forest for ranking
+                       method = "cv", 
+                       number = 10)
+
+# Run RFE
+rfe_result <- rfe(x = raisins_norm[, 1:7],
+                  y = raisins_norm$Class,
+                  sizes = c(1:7),
+                  rfeControl = rfe_ctrl)
+
+# Show selected features
+print(rfe_result)
+selected_features <- predictors(rfe_result)
+cat("Selected Features:", selected_features, "\n")
+
 # --- Cross-validation to find the best K using caret ---
-set.seed(123)
+set.seed(11)
 train_control <- trainControl(method = "cv", number = 10)  # 10-fold CV
 
 # Train KNN model with internal CV
@@ -57,7 +76,7 @@ test_labels  <- raisins_norm$Class[-train_idx]
 knn_final_pred <- knn(train = train_data, test = test_data, cl = train_labels, k = best_k)
 
 # --- Evaluate performance ---
-confusionMatrix(knn_final_pred, test_labels)
+confusionMatrix(knn_final_pred, test_labels, mode = "everything")
 
 # --- Visualize predictions ---
 plot_data <- test_data
@@ -67,11 +86,14 @@ ggpairs(plot_data, mapping = aes(color = Predicted),
         columns = 1:7, title = "Diagonal Plot Colored by Predicted Class (kNN)")
 dev.off()
 
-# --- (Optional) Decision Tree model for comparison ---
+#  Decision Tree model for comparison ---
+print("%%%%%% DECISION TREE %%%%%%")
 tree_model <- rpart(Class ~ ., data = raisins[train_idx,])
 CairoPNG("figures/tree_plot.png", width = 800, height = 600)
 rpart.plot(tree_model)
 dev.off()
 tree_pred <- predict(tree_model, raisins[-train_idx,], type = "vector")
 conf_matrix_tree <- table(Predicted = round(tree_pred), Actual = test_labels)
+accuracy <- sum(diag(conf_matrix_tree))/sum(conf_matrix_tree)
 print(conf_matrix_tree)
+cat("Accuracy of Tree Model:", accuracy, "\n")
