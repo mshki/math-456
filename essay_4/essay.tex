@@ -27,9 +27,13 @@
 
 We use and compare two different classification models, k-nearest neighbors and decision trees.  Each model is tasked with classifying raisins into the Kecimen or Besni class based on a set of 7 independent variables (see Data Description).
 
-The k-nearest neighbors (kNN) model works by finding the k closest data points using Euclidean distance, and selects the most common class among those neighbors.  Some assumptions for the kNN to work well is that all features are normalized, and that there are no unnecessary features.  Some benefits to the kNN model is that it is non-parametric, which makes it flexible to different data distributions.  However, it has a major drawback with computational cost, since it needs to calculate the distance with every single point for each prediction.
+\vspace{5mm}
 
-The decision tree model recursively splits the data according to a threshold of a variable.  Because every decision is explicitly listed and the decision tree can be clearly graphically visualized, the decision tree has a high interpretability.  They are also robust to extraneous features and outliers, thus no data assumptions are necessary.  However, decision trees are prone to overfitting, so it is important to limit the number of branches through methods like pruning.
+\noindent The k-nearest neighbors (kNN) model works by finding the k closest data points using Euclidean distance, and selects the most common class among those neighbors.  Some assumptions for the kNN to work well is that all features are normalized, and that there are no unnecessary features.  Some benefits to the kNN model is that it is non-parametric, which makes it flexible to different data distributions.  However, it has a major drawback with computational cost, since it needs to calculate the distance with every single point for each prediction.
+
+\vspace{5mm}
+
+\noindent The decision tree model recursively splits the data according to a threshold of a variable.  Because every decision is explicitly listed and the decision tree can be clearly graphically visualized, the decision tree has a high interpretability.  They are also robust to extraneous features and outliers, thus no data assumptions are necessary.  However, decision trees are prone to overfitting, so it is important to limit the number of branches through methods like pruning.
 
 
 \section*{Data Description}
@@ -59,7 +63,9 @@ Our data was found from Kaggle \cite{Raisin}.
 
 We first shuffled the data to ensure raisin classes were well mixed rather than separated. We then split our data, using 70\% of the data for training and the remaining 30\% for testing. We also normalized the data between the ranges of 0 and 1 for the kNN model. 
 
-We can see the diagonal plots for the model in figure \ref{fig:diagPlot}. There is a strong correlation between the AxisLengths, perimeter, and  Area, which makes sense. There is weak correlation between Extent and Area, Eccentricity and MinorAxisLength, (which is surprising considering that there is statistically significant correlation between eccentricity and MajorAxisLength), Extent and ConvexArea, Extent and MinorAxisLength. The remaining variables have some level of statistically significant correlation( refer to Fig \ref{fig:diagPlot} for more details).
+\vspace{5mm}
+
+\noindent We can see the diagonal plots for the model in figure \ref{fig:diagPlot}. There is a strong correlation between the AxisLengths, perimeter, and  Area, which makes sense. There is weak correlation between Extent and Area, Eccentricity and MinorAxisLength, (which is surprising considering that there is statistically significant correlation between eccentricity and MajorAxisLength), Extent and ConvexArea, Extent and MinorAxisLength. The remaining variables have some level of statistically significant correlation( refer to Fig \ref{fig:diagPlot} for more details).
 
 \begin{figure}[h]
     \centering
@@ -68,7 +74,9 @@ We can see the diagonal plots for the model in figure \ref{fig:diagPlot}. There 
     \label{fig:diagPlot}
 \end{figure}
 
-We used 10-fold cross-validation to find that $k = 41$ worked the best for our model with an accuracy of $86.7\%$. Figure \ref{fig:diagPlot} supports our assumption that certain features are grouped for different types of Raisin. The histograms along the diagonal show differing mean and standard deviation between the class of raisin and feature for all features other than extent and eccentricity. 
+\vspace{5mm}
+
+\noindent We used 10-fold cross-validation to find that $k = 41$ worked the best for our model with an accuracy of $86.7\%$. Figure \ref{fig:diagPlot} supports our assumption that certain features are grouped for different types of Raisin. The histograms along the diagonal show differing mean and standard deviation between the class of raisin and feature for all features other than extent and eccentricity. 
 
 
 \clearpage
@@ -78,9 +86,13 @@ We used 10-fold cross-validation to find that $k = 41$ worked the best for our m
 \subsection*{kNN Model}
 We ran our kNN model using subset selection.
 
-To ensure optimality of features for using a kNN algorithm, we ran subset selection with 10-fold cross validation to determine the most impactful features.
+\vspace{5mm}
 
-We can see the output below.
+\noindent To ensure optimality of features for using a kNN algorithm, we ran subset selection with 10-fold cross validation to determine the most impactful features.
+
+\vspace{5mm}
+
+\noindent We can see the output below.
 
 
 \begin{verbatim}
@@ -95,20 +107,24 @@ We can see the output below.
 
 \end{verbatim}
 
-From the output, we saw that all predictor variables had similar impact on the final prediction, and after tests with various subsets, we determined that using all features for the kNN model was optimal.
+\noindent From the output, we saw that all predictor variables had similar impact on the final prediction, and after tests with various subsets, we determined that using all features for the kNN model was optimal.
 
-We then used 10-fold cross-validation to find that the best k value is $k = 41$ with an accuracy of $86.7\%$ on the data with the following confusion matrix:
+\vspace{5mm}
+
+\noindent We then used 10-fold cross-validation to find that the best k value is $k = 41$ with an accuracy of $86.7\%$ on the data with the following confusion matrix:
 
 \begin{verbatim}
           Reference
-Prediction   0   1
-         0 119  27
-         1   9 115
+Prediction Kecimen Besni
+   Kecimen     119    27
+   Besni         9   115
 \end{verbatim}
 
-Where $0$ pertains to Kecimen and $1$ is Besni. We can use these metrics to calculate the precision, recall, and F1-score of our model as well.
+\noindent Where $0$ pertains to Kecimen and $1$ is Besni. We can use these metrics to calculate the precision, recall, and F1-score of our model as well.
 
-For the Kecimen class, we found
+\vspace{5mm}
+
+\noindent For the Kecimen class, we found
 
 \begin{enumerate}
     \item Precision: 0.815
@@ -142,64 +158,73 @@ The entire output can be found in Appendix B [\ref{sec:appendixB}], along with o
 \clearpage
 
 \subsection*{Decision Tree Model}
-We trained our decision tree with the same subset selection as k means, to find the split points shown in figure \ref{fig:tree_plot}.
+We used 10-fold cross-validation again, to find the optimal tuning parameters, picking the model with the highest accuracy. The plot from the cross validation can be found in figure \ref{fig:tree_cv}
+
+\noindent We trained our decision tree to find the split points shown in figure \ref{fig:tree_plot}.
 
 
-Since decision trees are able to run on all features, we did not need to perform any subset selection.
+\noindent Since decision trees are able to run on all features, we did not need to perform any subset selection.
 
-We found the following confusion matrix on the test data.
+\noindent We found the following confusion matrix on the test data.
 
 \begin{verbatim}
-              Reference
-Prediction   0   1
-         0 113  29
-         1  15 113
+         Actual
+Predicted Kecimen Besni
+        1     116    27
+        2      12   115
 \end{verbatim}
 
-From the confusion matrix, we determined the accuracy to be 0.87.
+\noindent From the confusion matrix, we determined the accuracy to be 0.856.
 
-Furthermore, we found the following metrics for precision, recall, and F1-score.
+\noindent Furthermore, we found the following metrics for precision, recall, and F1-score.
 
-For the Kecimen class, we found
+\noindent For the Kecimen class, we found
 
 \begin{enumerate}
-    \item Precision: 0.796
+    \item Precision: 0.811
 
-    \item Recall: 0.883
+    \item Recall: 0.906
 
-    \item F1-score: 0.837
+    \item F1-score: 0.856
 \end{enumerate}
 
-For the Besni class, we found
+\noindent  For the Besni class, we found
 
 \begin{enumerate}
-    \item Precision: 0.883
+    \item Precision: 0.906
 
-    \item Recall: 0.796
+    \item Recall: 0.810
 
-    \item F1-Score: 0.837
+    \item F1-Score: 0.855
 \end{enumerate}
 
 \subsection*{Comparison}
 
 Overall, we found better accuracy using the knn model, as well as better precision, recall, and F1-score on average. This indicates that the knn model is more optimal for this dataset than the decision tree.
-\clearpage
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\linewidth]{tree_plot}
+    \includegraphics[width=.7\linewidth]{tree_plot}
     \caption{Diagram of decision choices at each level of trained decision tree}
     \label{fig:tree_plot}
 \end{figure}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[width=\linewidth]{tree_cv_plot}
+	\caption{Accuracy as a function of complexity parameter for the decision tree.}
+	\label{fig:tree_cv}
+\end{figure}
 
-
-\section*{Conclusion}
-
-Overall, we found good results with both the kNN model and the decision tree model. We saw slightly higher accuracy using the decision tree, with 87\%, compared to 86\% using the kNN. The robustness of both models and being able to take into account all features of the dataset likely led to good performance. In addition, we saw higher precision and recall metrics with the decision tree as well, which may indicate that the data is not necessarily partitioned in space as well as we first thought.
-
-Finally, we are able to interpret the decisions of the tree model much better than of the kNN. Future steps may include testing with more robust models such as neural networks, or implementing ensemble methods such as random forests.
 
 \clearpage
+\section*{Conclusion}
+
+Overall, we found good results with both the kNN model and the decision tree model. We saw slightly higher accuracy knn model, with 86.7\% accuracy, compared to 85.5\% using the decision tree. The robustness of both models and being able to take into account all features of the dataset likely led to good performance. In addition, we saw higher precision and recall metrics with the knn model as well, which may indicate that the data is not necessarily partitioned in space as well as we first thought.
+
+\vspace{5mm}
+
+\noindent Future steps may include testing with more robust models such as neural networks, or implementing ensemble methods such as random forests.
+
 \begin{thebibliography}{9}
 
 \bibitem{STHDA}
