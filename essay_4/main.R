@@ -14,7 +14,8 @@ raisins <- read.csv("data/Raisin_Dataset.csv")
 raisins <- na.omit(raisins)  # Remove missing values
 
 # Convert Class to binary: Besni = 1, Kecimen = 0
-raisins$Class <- ifelse(raisins$Class == "Besni", 1, 0)
+raisins$Class <- factor(raisins$Class, levels = c("Kecimen", "Besni"))
+#raisins$Class <- ifelse(raisins$Class == "Besni", 1, 0)
 
 # --- Normalize numeric features for KNN ---
 normalize <- function(x) {
@@ -87,12 +88,29 @@ ggpairs(plot_data, mapping = aes(color = Predicted),
 dev.off()
 
 #  Decision Tree model for comparison ---
-print("%%%%%% DECISION TREE %%%%%%")
-tree_model <- rpart(Class ~ ., data = raisins[train_idx,])
-CairoPNG("figures/tree_plot.png", width = 800, height = 600)
-rpart.plot(tree_model)
+#raisins$Class <- factor(raisins$Class, levels = c(0, 1))
+# --- Cross-validation for Decision Tree ---
+set.seed(123)
+tree_cv_model <- train(Class ~ ., 
+                       data = raisins,
+                       method = "rpart",
+                       trControl = train_control,  # already defined as 10-fold CV
+                       tuneLength = 10)  # explore different complexity parameters (cp)
+
+# Output the best model and its complexity parameter
+print(tree_cv_model)
+CairoPNG("figures/tree_cv_plot.png", width = 800, height = 600)
+plot(tree_cv_model)
 dev.off()
-tree_pred <- predict(tree_model, raisins[-train_idx,], type = "vector")
+
+# Use the best tree model to make predictions on the test set
+tree_best_model <- tree_cv_model$finalModel
+
+print("%%%%%% DECISION TREE %%%%%%")
+CairoPNG("figures/tree_plot.png", width = 800, height = 600)
+rpart.plot(tree_best_model)
+dev.off()
+tree_pred <- predict(tree_best_model, raisins[-train_idx,], type = "vector")
 conf_matrix_tree <- table(Predicted = round(tree_pred), Actual = test_labels)
 accuracy <- sum(diag(conf_matrix_tree))/sum(conf_matrix_tree)
 print(conf_matrix_tree)
