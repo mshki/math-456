@@ -4,6 +4,7 @@ library(caTools)
 library(GGally)
 library(factoextra)
 library(caret)
+library(cluster)
 
 df <- read.csv("data/SP500.csv")
 
