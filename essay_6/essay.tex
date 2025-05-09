@@ -3,6 +3,7 @@
 \usepackage{subcaption}
 \usepackage{amsmath, amssymb, booktabs}
 \usepackage{hyperref}
+\usepackage{listings}
 \usepackage{comment}
 \graphicspath{ {./figures/} }
 \usepackage{xcolor}  % Required for color customization
@@ -13,12 +14,30 @@
   urlcolor=blue     % Color of external links (URLs)
 }
 
-\title {}
-% \title{Raisin the Bar from Linear Regression to Generalized Linear Models}
+
+\title {CAT Got Your Tongue? \\
+\large Stock Returns Forecasting Using ARMA-GARCH}
 \author{Johnathan Ferdinand, Devina Gera, Archimedes Li, Henry Liu, \\Katherine Shi, Sam Stevens}
 \date{\today}
 \begin{document}
 \maketitle
+
+\section{Introduction}
+The ARMA-GARCH model is a model used to analyze time series data exhibiting both autocorrelation in its mean and time-varying volatility.  The ARMA component models the conditional mean as dependent on past values and errors, while the GARCH component models volatility by using the conditional variance as dependent on past squared errors and past variances.
+
+\noindent We use this model to forecast the stock price CAT, a construction company.  The ARMA-GARCH model is especially useful for modelling stocks because stock prices often are correlated with their prices at past time steps.  The volatility of stocks often occurs in “bursts,” where time steps of high variance are seen close to other time steps of high variance.
+
+\noindent The R packages we used were quantmod, lmtest, dplyr, PerformanceAnalytics, ggplot2, xts, tidyverse, “feasts”, “fable”, “lubridate”, “gridExtra”, tseries, forecast, and rugarch. 
+
+\noindent Our results include forecasting returns over the period of June 1, 2017 to May 1, 2021 and comparing our predicted returns to the actual returns over this time period. 
+
+\section{Data Description}
+\noindent For our data, we used historical stock prices for Caterpillar (ticker: CAT) ranging from March 13, 1986 to May 31, 2017 for our training and from June 1, 2017 to May 1, 2021 for our testing data, gathered daily. The data was gathered from the Yahoo finance source built into R, and all data points were gathered on the daily timeframe. 
+
+\noindent For each day, we stored two values: the price of the stock and the returns of the stock (relative to the price at the start date).
+
+\noindent We did not remove any outliers, as for our task of forecasting stock returns, outliers in return or prices typically have underlying macroeconomic causes such as earnings calls, and removing these points would make it difficult to forecast such shifts in price in the future.
+
 
 \section{Analysis}
 We can see that the price increases over time despite showing volitility. The mean and variance change over time so the stock price is not stationary. (Figure \ref{fig:stockPrices}).
@@ -97,6 +116,81 @@ We reject the null hypothesis,  thus the return series is not independent.
 	\label{fig:stockPrices}
 \end{figure}
 
+\section{Model Evaluation and Prediction}
+We evaluated several ARMA-GARCH models to determine the best fit for forecasting Caterpillar (CAT) stock returns and then use it for prediction.
 
+We fit eight candidate models combining ARMA structures with eGARCH (exponential GARCH) volatility components. Specifically, we tested:
+
+ARMA(0,0)-eGARCH(1,1)
+ARMA(1,1)-eGARCH(1,1
+ARMA(2,2)-eGARCH(1,1)
+ARMA(0,0)-eGARCH(1,2)
+ARMA(1,1)-eGARCH(2,1)
+ARMA(3,1)-eGARCH(1,1)
+ARMA(3,2)-eGARCH(1,1)
+ARMA(1,3)-eGARCH(1,1)
+
+We evaluated the models using the Akaike Information Criterion (AIC), which balances model fit with complexity, a lower AIC indicates a better model. The AIC results were:
+\begin{verbatim}
+Model
+AIC
+fit_garch_1 (ARMA(0,0)-eGARCH(1,1))
+-5.2411 
+fit_garch_2 (ARMA(1,1)-eGARCH(1,1))
+-5.2414
+fit_garch_3 (ARMA(2,2)-eGARCH(1,1))
+-5.2422
+fit_garch_4 (ARMA(0,0)-eGARCH(1,2))
+ -5.2419
+fit_garch_5 (ARMA(1,1)-eGARCH(2,1))
+-5.2427
+fit_garch_6 (ARMA(3,1)-eGARCH(1,1))
+-5.2422
+fit_garch_7 (ARMA(3,2)-eGARCH(1,1))
+-5.2420
+fit_garch_8 (ARMA(1,3)-eGARCH(1,1))
+-5.2422
+\end{verbatim}
+
+We found that \texttt{fit\_garch\_5 (ARMA(1,1)-eGARCH(2,1))} provided the best balance of fit and simplicity, as it achieved the lowest AIC among the tested models.
+
+Further to prove the efficiency of the model we also check for after subset selection:
+
+Model summary: The ARMA(1,1) component captures short-term dependencies in the return series, while the eGARCH(2,1) component models asymmetric volatility effects (such as the leverage effect, where negative shocks impact volatility differently from positive shocks).
+
+
+Persistence of volatility: We measured how much past volatility carries into future volatility. A high persistence value suggests the presence of volatility clustering, a common feature in financial time series.
+
+
+Model convergence: We verified that the model estimation converged successfully, confirming that the parameter estimates are stable and reliable.
+
+ We then used the final model for forecasting the returns and price data for the period from June 1, 2017 to May 1, 2021:
+Static 50-day ahead forecast: We predicted the next 50 days of returns and volatility, providing both expected future returns and confidence intervals. We found a mean error of 0.00039 and an RMSE of 0.0208.
+
+
+Rolling forecast: We implemented a rolling window approach to simulate dynamic updating over time, showing how the model would perform in a live forecasting setting. We found a mean error of 0.0004 and an RMSE of 0.02.
+
+
+Bootstrap forecast: We generated bootstrapped forecasts which produced a distribution of possible future paths to account for estimation uncertainty, offering a more robust prediction framework.
+
+From this, using the Box-Ljung test, we found no autocorrelation in the errors, finding a $X^2$ value of $173$ on the rolling forecast errors with a p-value < $2.2e-16$. 
+
+ To assess the model’s accuracy and suitability, we used:
+AIC for in-sample fit comparison.
+
+
+Residual diagnostics (including plots and the Ljung-Box test) to ensure no remaining autocorrelation or heteroskedasticity in the residuals.
+
+
+Forecast plots comparing predicted vs. actual returns to visually evaluate performance.
+
+
+In summary, the ARMA(1,1)-eGARCH(2,1) model was selected as the final model based on thorough assessment
+
+\section{Conclusion}
+Our chosen model performed quite poorly in the immediate future despite having a low MSE of 0.00039 for the 50-day ahead forecast.  The reason this MSE is so small is because the scale of the CAT stock price is small.  If we look at the forecast predictions compared to the true stock prices, it captures very little of the volatility shown in the plot.  In consolation, the forecast does show some ups and downs that do line up with the true trends.
+
+
+\section{Appendix A: Code}
 
 \end{document}
